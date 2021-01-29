@@ -12,10 +12,10 @@
         }
     ],
     "require": {
-        "php": "^7.3"
+        "php": "^7.3|^8.0"
     },
     "require-dev": {
-        "laravel-zero/framework": "^8.0",
+        "laravel-zero/framework": "^8.4",
         "laravel/forge-sdk": "^3.2",
         "mockery/mockery": "^1.4.2",
         "nunomaduro/laravel-console-menu": "^3.1",
