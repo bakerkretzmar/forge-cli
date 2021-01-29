@@ -1,5 +1,6 @@
 vendor/
 *.cache
 .env.forge
+.php_cs
 forge.yml
 phpunit.xml
