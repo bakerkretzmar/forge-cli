@@ -13,6 +13,7 @@ trait EnsureHasToken
     {
         if (! $this->hasToken()) {
             $this->error('You have not configured your Forge API token yet. Please call "forge login" first.');
+
             return false;
         }
 

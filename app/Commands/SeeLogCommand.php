@@ -3,10 +3,8 @@
 namespace App\Commands;
 
 use App\Support\Configuration;
-use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Arr;
 use Laravel\Forge\Forge;
-use LaravelZero\Framework\Commands\Command;
 
 class SeeLogCommand extends ForgeCommand
 {
@@ -28,10 +26,9 @@ class SeeLogCommand extends ForgeCommand
         $serverId = $configuration->get($environment, 'server');
         $siteId = $configuration->get($environment, 'id');
 
-        $logs = $forge->get("servers/{$serverId}/logs?file=".$this->option('file'));
+        $logs = $forge->get("servers/{$serverId}/logs?file=" . $this->option('file'));
 
-        $this->info('Log file: '.Arr::get($logs, 'path'));
+        $this->info('Log file: ' . Arr::get($logs, 'path'));
         $this->info(Arr::get($logs, 'content'));
     }
-
 }

@@ -3,7 +3,6 @@
 namespace App\Commands;
 
 use App\Support\Configuration;
-use Illuminate\Console\Scheduling\Schedule;
 use Laravel\Forge\Forge;
 
 class InfoCommand extends ForgeCommand

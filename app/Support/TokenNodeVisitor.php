@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Support;
 
 use PhpParser\Node;

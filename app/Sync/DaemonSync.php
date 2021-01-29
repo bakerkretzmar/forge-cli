@@ -7,11 +7,9 @@ use Illuminate\Support\Str;
 use Laravel\Forge\Resources\Daemon;
 use Laravel\Forge\Resources\Server;
 use Laravel\Forge\Resources\Site;
-use Laravel\Forge\Resources\Webhook;
 
 class DaemonSync extends BaseSync
 {
-
     public function sync(string $environment, Server $server, Site $site, OutputStyle $output, bool $force = false): void
     {
         $daemons = collect($this->config->get($environment, 'daemons', []));
@@ -48,7 +46,7 @@ class DaemonSync extends BaseSync
                 'processes' => $daemon->processes,
                 'startsecs' => $daemon->startsecs,
             ];
-        }), function ($a, $b){
+        }), function ($a, $b) {
             return count(array_diff($a, $b)) > 0;
         })->map(function ($daemonData) use ($server, $site, $output) {
             $output->writeln("Creating daemon: {$daemonData['command']}");

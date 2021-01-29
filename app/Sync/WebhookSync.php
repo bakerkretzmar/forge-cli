@@ -9,7 +9,6 @@ use Laravel\Forge\Resources\Webhook;
 
 class WebhookSync extends BaseSync
 {
-
     public function sync(string $environment, Server $server, Site $site, OutputStyle $output, bool $force = false): void
     {
         $webhooks = collect($this->config->get($environment, 'webhooks', []));
@@ -31,8 +30,9 @@ class WebhookSync extends BaseSync
                 return $webhooks->contains($webhook->url);
             });
 
-        if (!$force && $deleteWebhooks->isNotEmpty()) {
+        if (! $force && $deleteWebhooks->isNotEmpty()) {
             $output->warning("Skipping the deletion of {$deleteWebhooks->count()} Webhooks. \nUse --force to delete them.");
+
             return;
         }
 

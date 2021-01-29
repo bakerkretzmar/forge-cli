@@ -3,9 +3,7 @@
 namespace App\Commands;
 
 use App\Support\Configuration;
-use Illuminate\Console\Scheduling\Schedule;
 use Laravel\Forge\Forge;
-use LaravelZero\Framework\Commands\Command;
 
 class PushNginxCommand extends ForgeCommand
 {
@@ -30,11 +28,10 @@ class PushNginxCommand extends ForgeCommand
         $environment = $this->argument('environment');
         $filename = "nginx-forge-{$environment}.conf";
 
-        if (!file_exists($filename)) {
+        if (! file_exists($filename)) {
             $this->error("The {$filename} file does not exist.");
             exit();
         }
-
 
         $siteId = $configuration->get($environment, 'id');
 

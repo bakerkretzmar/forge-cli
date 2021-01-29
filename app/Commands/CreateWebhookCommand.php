@@ -3,8 +3,6 @@
 namespace App\Commands;
 
 use App\Support\Configuration;
-use Illuminate\Console\Scheduling\Schedule;
-use LaravelZero\Framework\Commands\Command;
 
 class CreateWebhookCommand extends ForgeCommand
 {

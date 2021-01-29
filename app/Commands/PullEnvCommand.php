@@ -2,12 +2,11 @@
 
 namespace App\Commands;
 
-use Laravel\Forge\Forge;
 use App\Support\Configuration;
+use Laravel\Forge\Forge;
 
 class PullEnvCommand extends ForgeCommand
 {
-
     protected $signature = 'env:pull {environment=production}';
 
     protected $description = 'Pull the env file from Forge';

@@ -5,18 +5,17 @@ namespace App\Sync;
 use Illuminate\Console\OutputStyle;
 use Laravel\Forge\Resources\Server;
 use Laravel\Forge\Resources\Site;
-use Laravel\Forge\Resources\Webhook;
 
 class DeploymentScriptSync extends BaseSync
 {
-
     public function sync(string $environment, Server $server, Site $site, OutputStyle $output, bool $force = false): void
     {
         $deploymentScript = join("\n", $this->config->get($environment, 'deployment', ''));
         $deploymentScriptOnForge = $this->forge->siteDeploymentScript($server->id, $site->id);
 
-        if (!$force && $deploymentScript !== $deploymentScriptOnForge) {
+        if (! $force && $deploymentScript !== $deploymentScriptOnForge) {
             $output->warning("Skipping the deployment log update, as the script on Forge is different than your local script.\nUse --force to overwrite it.");
+
             return;
         }
 

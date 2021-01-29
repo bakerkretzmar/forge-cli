@@ -4,7 +4,6 @@ namespace App\Commands;
 
 use App\Commands\Concerns\EnsureHasToken;
 use App\Support\Configuration;
-use Illuminate\Console\Scheduling\Schedule;
 use Laravel\Forge\Forge;
 use Laravel\Forge\Resources\Server;
 use Laravel\Forge\Resources\Site;

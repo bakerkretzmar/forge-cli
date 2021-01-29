@@ -6,11 +6,9 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Laravel\Forge\Forge;
 use Laravel\Forge\Resources\Daemon;
-use Laravel\Forge\Resources\SecurityRule;
 use Laravel\Forge\Resources\Server;
 use Laravel\Forge\Resources\Site;
 use Laravel\Forge\Resources\Webhook;
-use Laravel\Forge\Resources\Worker;
 use Symfony\Component\Yaml\Yaml;
 
 class Configuration
@@ -94,6 +92,6 @@ class Configuration
                     'processes' => $daemon->processes,
                     'startsecs' => $daemon->startsecs,
                 ];
-        })->values()->toArray();
+            })->values()->toArray();
     }
 }

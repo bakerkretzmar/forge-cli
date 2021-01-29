@@ -4,9 +4,7 @@ namespace App\Commands;
 
 use App\Support\Configuration;
 use Carbon\CarbonInterval;
-use Illuminate\Console\Scheduling\Schedule;
 use Laravel\Forge\Forge;
-use LaravelZero\Framework\Commands\Command;
 
 class DeployCommand extends ForgeCommand
 {
@@ -16,10 +14,10 @@ class DeployCommand extends ForgeCommand
 
     public function handle(Forge $forge, Configuration $configuration)
     {
-        if (!$this->ensureHasToken()) {
+        if (! $this->ensureHasToken()) {
             return 1;
         }
-        if (!$this->ensureHasForgeConfiguration()) {
+        if (! $this->ensureHasForgeConfiguration()) {
             return 1;
         }
 
@@ -40,7 +38,7 @@ class DeployCommand extends ForgeCommand
 
         $forge->deploySite($serverId, $siteId);
 
-        if (!$this->option('no-wait')) {
+        if (! $this->option('no-wait')) {
             $forge->retry(CarbonInterval::minutes(10)->totalSeconds, function () use ($serverId, $siteId, $forge) {
                 $site = $forge->site($serverId, $siteId);
 
@@ -50,7 +48,7 @@ class DeployCommand extends ForgeCommand
 
         $this->info('The site has been deployed');
 
-        if (!$this->option('no-wait')) {
+        if (! $this->option('no-wait')) {
             $this->call('deploy:log', [
                 'environment' => $environment,
             ]);

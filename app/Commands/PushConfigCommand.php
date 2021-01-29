@@ -7,12 +7,9 @@ use App\Sync\BaseSync;
 use App\Sync\DaemonSync;
 use App\Sync\DeploymentScriptSync;
 use App\Sync\WebhookSync;
-use Illuminate\Console\Scheduling\Schedule;
 use Laravel\Forge\Forge;
 use Laravel\Forge\Resources\Server;
 use Laravel\Forge\Resources\Site;
-use Laravel\Forge\Resources\Webhook;
-use LaravelZero\Framework\Commands\Command;
 
 class PushConfigCommand extends ForgeCommand
 {
@@ -33,10 +30,10 @@ class PushConfigCommand extends ForgeCommand
      */
     public function handle(Forge $forge, Configuration $configuration)
     {
-        if (!$this->ensureHasToken()) {
+        if (! $this->ensureHasToken()) {
             return 1;
         }
-        if (!$this->ensureHasForgeConfiguration()) {
+        if (! $this->ensureHasForgeConfiguration()) {
             return 1;
         }
 

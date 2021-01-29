@@ -36,7 +36,7 @@ class DeployLogCommand extends ForgeCommand
             $this->line($log);
             $this->info('----------- END DEPLOYMENT LOG -----------');
         } catch (NotFoundException $exception) {
-            $this->error("There is currently no deployment log available.");
+            $this->error('There is currently no deployment log available.');
         }
     }
 }

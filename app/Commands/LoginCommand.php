@@ -36,6 +36,7 @@ class LoginCommand extends Command
     {
         if ($this->hasToken() && ! $this->option('force')) {
             $this->warn('You are already logged in');
+
             return 0;
         }
 
@@ -55,7 +56,7 @@ class LoginCommand extends Command
 
         $browser->submitForm('Sign In', [
             'email' => $email,
-            'password' => $password
+            'password' => $password,
         ]);
 
         $uri = $browser->getHistory()->current()->getUri();

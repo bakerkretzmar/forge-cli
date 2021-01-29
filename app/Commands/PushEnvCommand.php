@@ -27,11 +27,10 @@ class PushEnvCommand extends ForgeCommand
         $environment = $this->argument('environment');
         $envFile = ".env.forge.{$environment}";
 
-        if (!file_exists($envFile)) {
+        if (! file_exists($envFile)) {
             $this->error("The {$envFile} file does not exist.");
             exit();
         }
-
 
         $siteId = $configuration->get($environment, 'id');
 

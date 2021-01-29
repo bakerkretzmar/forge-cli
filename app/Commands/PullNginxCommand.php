@@ -3,9 +3,7 @@
 namespace App\Commands;
 
 use App\Support\Configuration;
-use Illuminate\Console\Scheduling\Schedule;
 use Laravel\Forge\Forge;
-use LaravelZero\Framework\Commands\Command;
 
 class PullNginxCommand extends ForgeCommand
 {
@@ -34,6 +32,6 @@ class PullNginxCommand extends ForgeCommand
 
         file_put_contents($filename, $config);
 
-        $this->info('Wrote nginx config file to '.$filename);
+        $this->info('Wrote nginx config file to ' . $filename);
     }
 }
