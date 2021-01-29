@@ -2,7 +2,7 @@
 
 namespace App\Commands\Concerns;
 
-trait EnsureHasToken
+trait NeedsForgeToken
 {
     protected function hasToken()
     {

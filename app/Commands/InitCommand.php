@@ -2,7 +2,7 @@
 
 namespace App\Commands;
 
-use App\Commands\Concerns\EnsureHasToken;
+use App\Commands\Concerns\NeedsForgeToken;
 use App\Support\Configuration;
 use Laravel\Forge\Forge;
 use Laravel\Forge\Resources\Server;
@@ -11,7 +11,7 @@ use LaravelZero\Framework\Commands\Command;
 
 class InitCommand extends Command
 {
-    use EnsureHasToken;
+    use NeedsForgeToken;
 
     const PROJECT_TYPES = [
         'php' => 'General PHP/Laravel Application.',
