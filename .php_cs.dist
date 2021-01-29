@@ -4,7 +4,7 @@ use PhpCsFixer\Config;
 use Symfony\Component\Finder\Finder;
 
 $finder = Finder::create()->in(__DIR__)
-    ->name('*.php')
+    ->name(['forge', '*.php'])
     ->exclude(['builds', 'docs', 'vendor'])
     ->ignoreDotFiles(true)
     ->ignoreVCS(true);
