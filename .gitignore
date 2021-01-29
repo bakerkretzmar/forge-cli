@@ -1,7 +1,5 @@
-/vendor
-/.idea
-/.vscode
-/.vagrant
-.phpunit.result.cache
+vendor/
+*.cache
 .env.forge
 forge.yml
+phpunit.xml

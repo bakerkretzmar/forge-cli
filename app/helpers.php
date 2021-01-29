@@ -1,13 +1,10 @@
 <?php
 
-function exit_if($condition) {
-    if ($condition) {
-        exit();
-    }
-}
-
-function exit_unless($condition) {
-    if (! $condition) {
-        exit();
+if (! function_exists('exit_if')) {
+    function exit_if(bool $condition, int $code = 1)
+    {
+        if ($condition) {
+            exit($code);
+        }
     }
 }
