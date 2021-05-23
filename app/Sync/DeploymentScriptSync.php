@@ -3,6 +3,7 @@
 namespace App\Sync;
 
 use Illuminate\Console\OutputStyle;
+use Laravel\Forge\Exceptions\ValidationException;
 use Laravel\Forge\Resources\Server;
 use Laravel\Forge\Resources\Site;
 
@@ -14,7 +15,7 @@ class DeploymentScriptSync extends BaseSync
         $deploymentScriptOnForge = $this->forge->siteDeploymentScript($server->id, $site->id);
 
         if (! $force && $deploymentScript !== $deploymentScriptOnForge) {
-            $output->warning("Skipping the deployment log update, as the script on Forge is different than your local script.\nUse --force to overwrite it.");
+            $output->warning("Skipping the deployment script update, as the script on Forge is different than your local script.\nUse --force to overwrite it.");
 
             return;
         }
@@ -22,7 +23,13 @@ class DeploymentScriptSync extends BaseSync
         $this->forge->updateSiteDeploymentScript($server->id, $site->id, $deploymentScript);
 
         if ($this->config->get($environment, 'quick-deploy')) {
-            $site->enableQuickDeploy();
+            try {
+                $site->enableQuickDeploy();
+            } catch (ValidationException $e) {
+                if (! in_array('Hook already exists on this repository', $e->errors())) {
+                    throw $e;
+                }
+            }
         } else {
             $site->disableQuickDeploy();
         }
