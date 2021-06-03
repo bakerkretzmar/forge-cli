@@ -44,7 +44,9 @@ class InitCommand extends Command
             return "{$server->name} - [{$server->id}]";
         })->toArray())->open();
 
-        exit_if(is_null($selectedServer));
+        if (is_null($selectedServer)) {
+            return static::FAILURE;
+        }
 
         $server = $servers[$selectedServer];
 
@@ -57,14 +59,16 @@ class InitCommand extends Command
                 return "{$site->name} - [{$site->id}]";
             })->toArray())->open();
 
-            exit_if(is_null($selectedSite));
+            if (is_null($selectedSite)) {
+                return static::FAILURE;
+            }
 
             $site = $sites[$selectedSite];
         } else {
             $site = $this->createSite($server);
         }
 
-        $configuration->initialize($this->argument('environment'), $server, $site, getcwd());
+        $configuration->initialize($this->argument('environment'), $server, $site);
 
         $this->info('The project was successfully initialized.');
     }
@@ -77,7 +81,9 @@ class InitCommand extends Command
 
         $directory = $this->ask('What is the public directory of your project?', '/public');
 
-        exit_if(is_null($selectedProjectType));
+        if (is_null($selectedProjectType)) {
+            return static::FAILURE;
+        }
 
         $this->info('Creating site on Forge');
 

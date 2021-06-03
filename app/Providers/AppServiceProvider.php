@@ -7,28 +7,11 @@ use Laravel\Forge\Forge;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Bootstrap any application services.
-     *
-     * @return void
-     */
-    public function boot()
-    {
-        //
-    }
-
-    /**
-     * Register any application services.
-     *
-     * @return void
-     */
-    public function register()
+    public function register(): void
     {
         $this->loadConfigurationFile();
 
-        $this->app->singleton(Forge::class, function () {
-            return new Forge(config('forge.token'));
-        });
+        $this->app->singleton(Forge::class, fn () => new Forge(config('forge.token')));
     }
 
     protected function loadConfigurationFile()

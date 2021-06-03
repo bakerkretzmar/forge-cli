@@ -4,37 +4,28 @@ namespace App\Commands;
 
 use App\Support\Configuration;
 use Laravel\Forge\Forge;
+use Symfony\Component\Console\Helper\TableCell;
 
 class InfoCommand extends ForgeCommand
 {
-    protected $signature = 'info {environment=production}';
+    protected $name = 'info';
 
-    protected $description = 'Get information about the currently linked site on Forge.';
+    protected $description = 'Show information about a linked site on Forge.';
 
-    public function handle(Forge $forge, Configuration $configuration)
+    public function handle(Forge $forge): int
     {
-        if (! $this->ensureHasToken()) {
-            return 1;
-        }
-        if (! $this->ensureHasForgeConfiguration()) {
-            return 1;
-        }
+        $server = $forge->server($serverId = $this->config->get('server'));
+        $site = $forge->site($serverId, $this->config->get('id'));
 
-        $environment = $this->argument('environment');
-
-        $serverId = $configuration->get($environment, 'server');
-        $siteId = $configuration->get($environment, 'id');
-
-        $server = $forge->server($serverId);
-        $site = $forge->site($serverId, $siteId);
-
-        $data = [
+        $this->table([new TableCell('Server Details', ['colspan' => 2])], [
             ['Server', $server->name],
             ['IP', $server->ipAddress],
+            ['Type', $server->type],
             ['Site', $site->name],
             ['Directory', $site->directory],
-        ];
+            // @todo more info! e.g. php versions, mysql versions, provider, etc. sections? list all sites?
+        ]);
 
-        $this->table(['Key', 'Value'], $data);
+        return static::SUCCESS;
     }
 }
