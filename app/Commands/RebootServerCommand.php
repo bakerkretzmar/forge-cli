@@ -4,16 +4,12 @@ namespace App\Commands;
 
 class RebootServerCommand extends RebootCommand
 {
-    protected $signature = 'reboot:server {environment=production} {--confirm}';
-
-    protected $description = 'Reboot the server';
-
+    protected $name = 'reboot:server';
+    protected $description = 'Reboot server.';
     protected $subject = 'the server';
 
-    public function reboot()
+    public function reboot(string $serverId): void
     {
-        $serverId = $this->configuration->get($this->argument('environment'), 'server');
-
         $this->forge->rebootServer($serverId);
     }
 }

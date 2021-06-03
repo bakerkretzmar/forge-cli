@@ -4,16 +4,12 @@ namespace App\Commands;
 
 class RebootPostgresCommand extends RebootCommand
 {
-    protected $signature = 'reboot:postgres {environment=production} {--confirm}';
-
-    protected $description = 'Reboot Postgres';
-
+    protected $name = 'reboot:postgres';
+    protected $description = 'Reboot Postgres.';
     protected $subject = 'Postgres';
 
-    public function reboot()
+    public function reboot(string $serverId): void
     {
-        $serverId = $this->configuration->get($this->argument('environment'), 'server');
-
         $this->forge->rebootPostgres($serverId);
     }
 }

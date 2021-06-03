@@ -4,44 +4,36 @@ namespace App\Commands;
 
 use App\Support\Configuration;
 use Laravel\Forge\Forge;
+use Symfony\Component\Console\Input\InputOption;
 
 abstract class RebootCommand extends ForgeCommand
 {
-    /** @var Forge */
-    protected $forge;
+    protected Forge $forge;
 
-    /** @var Configuration */
-    protected $configuration;
+    protected $subject;
 
-    /** @var string the name of what is being rebooted */
-    protected $subject = '';
+    abstract public function reboot(string $serverId): void;
 
-    public function handle(Forge $forge, Configuration $configuration)
+    public function handle(Forge $forge): int
     {
-        if (! $this->ensureHasToken()) {
-            return 1;
-        }
-
-        if (! $this->ensureHasForgeConfiguration()) {
-            return 1;
-        }
-
         $this->forge = $forge;
-        $this->configuration = $configuration;
 
-        if (! $this->option('confirm')) {
-            $this->warn('Rebooting ' . $this->subject . ' requires confirmation');
-            $this->warn('Please use --confirm to confirm that you want to reboot ' . $this->subject);
+        $this->info("Rebooting {$this->subject} in {$this->emphasize($this->environment)} environment.");
+        $this->info('This could take a few minutes and cause temporary downtime.');
 
-            return 1;
+        if (! $this->option('force') && $this->confirm('Are you sure?')) {
+            $this->info("Rebooting {$this->subject}.");
+
+            $this->reboot($this->config->get('server'));
         }
 
-        $this->info('Rebooting ' . $this->subject);
-
-        $this->reboot();
-
-        $this->info('Depending on the server, this may take some time and may cause temporary downtime');
+        return static::SUCCESS;
     }
 
-    abstract public function reboot();
+    protected function getOptions(): array
+    {
+        return [
+            new InputOption('force', null, InputOption::VALUE_NONE, 'Reboot immediately without confirming.'),
+        ];
+    }
 }

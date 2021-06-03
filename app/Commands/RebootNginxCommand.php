@@ -4,16 +4,12 @@ namespace App\Commands;
 
 class RebootNginxCommand extends RebootCommand
 {
-    protected $signature = 'reboot:nginx {environment=production} {--confirm}';
-
-    protected $description = 'Reboot Nginx';
-
+    protected $name = 'reboot:nginx';
+    protected $description = 'Reboot Nginx.';
     protected $subject = 'Nginx';
 
-    public function reboot()
+    public function reboot(string $serverId): void
     {
-        $serverId = $this->configuration->get($this->argument('environment'), 'server');
-
         $this->forge->rebootNginx($serverId);
     }
 }
