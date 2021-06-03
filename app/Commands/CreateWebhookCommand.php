@@ -6,31 +6,23 @@ use App\Support\Configuration;
 
 class CreateWebhookCommand extends ForgeCommand
 {
-    protected $signature = 'webhook {environment=production}';
+    protected $name = 'create:webhook';
 
-    protected $description = 'Create a new Webhook on Laravel Forge';
+    protected $description = 'Create a new Webhook on Forge.';
 
-    public function handle(Configuration $configuration)
+    public function handle(): int
     {
-        if (! $this->ensureHasToken()) {
-            return 1;
-        }
-        if (! $this->ensureHasForgeConfiguration()) {
-            return 1;
-        }
+        $url = $this->ask('What is the URL of the webhook?');
 
-        $environment = $this->argument('environment');
+        $webhooks = $this->config->get('webhooks', []);
 
-        $url = $this->ask('Which webhook URL do you want to add');
-
-        $webhooks = $configuration->get($environment, 'webhooks', []);
-
+        // @todo ->append()? or make it 'settable'?
         $webhooks[] = $url;
 
-        $configuration->set($environment, 'webhooks', $webhooks);
+        // @todo ->append()? or make it 'settable'?
+        $this->config->set('webhooks', $webhooks);
+        $this->config->save();
 
-        $configuration->store(getcwd() . '/forge.yml');
-
-        $this->info('Successfully stored the webhook in your forge.yml config file. You can push the configuration using "forge config:push".');
+        $this->info('Stored the webhook in your forge.yml config file. You can push the configuration using `forge config:push`.');
     }
 }

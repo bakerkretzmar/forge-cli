@@ -43,9 +43,8 @@ class CreateDaemonCommand extends ForgeCommand
             'startsecs' => $startsecs,
         ];
 
-        $configuration->set($environment, 'daemons', $daemons);
-
-        $configuration->store(getcwd() . '/forge.yml');
+        $configuration->set('daemons', $daemons);
+        $configuration->save();
 
         $this->info('Successfully stored daemon in your forge.yml config file. You can push the configuration using "forge config:push".');
     }
