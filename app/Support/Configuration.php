@@ -13,56 +13,30 @@ use Symfony\Component\Yaml\Yaml;
 
 class Configuration
 {
-    /** @var array */
-    protected $config;
+    protected Forge $forge;
 
-    /** @var Forge */
-    protected $forge;
+    protected ?string $environment = null;
 
-    public function __construct(Forge $forge)
+    protected ?string $path = null;
+
+    protected array $config = [];
+
+    public function __construct(Forge $forge, string $environment = null)
     {
         $this->forge = $forge;
+        $this->environment = $environment;
 
         try {
-            $this->config = Yaml::parseFile(getcwd() . '/forge.yml');
+            $this->config = Yaml::parseFile($this->path());
         } catch (\Exception $e) {
-            $this->config = [];
         }
     }
 
-    public function initialize(string $environment, Server $server, Site $site, string $path)
-    {
-        $configFile = $path . '/forge.yml';
-
-        $this->config[$environment] = $this->getConfigFormat($server, $site);
-
-        $this->store($configFile);
-    }
-
-    public function store(string $configFile)
-    {
-        $flags = Yaml::DUMP_EMPTY_ARRAY_AS_SEQUENCE | Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK;
-
-        $configContent = Yaml::dump($this->config, 4, 2, $flags);
-
-        file_put_contents($configFile, $configContent);
-    }
-
-    public function get(string $environment, string $key, $default = null)
-    {
-        return Arr::get($this->config, "{$environment}.{$key}", $default);
-    }
-
-    public function set(string $environment, string $key, $value)
-    {
-        Arr::set($this->config, "{$environment}.{$key}", $value);
-    }
-
-    protected function getConfigFormat(Server $server, Site $site)
+    public function initialize(string $environment, Server $server, Site $site)
     {
         $workers = $this->forge->workers($server->id, $site->id);
 
-        return [
+        $this->config[$environment] = [
             'id' => $site->id,
             'name' => $site->name,
             'server' => $server->id,
@@ -70,14 +44,36 @@ class Configuration
             'deployment' => $site->getDeploymentScript(),
             'webhooks' => $this->getWebhooks($server, $site),
             'daemons' => $this->getDaemons($server, $site),
+            // 'workers' => $this->getWorkers($server, $site),
         ];
+
+        $this->save();
     }
 
-    protected function getWebhooks(Server $server, Site $site)
+    public function get(string $key, mixed $default = null): mixed
     {
-        return collect($this->forge->webhooks($server->id, $site->id))->map(function (Webhook $webhook) {
-            return $webhook->url;
-        })->values()->toArray();
+        return Arr::get($this->config, "{$this->environment}.{$key}", $default);
+    }
+
+    public function set(string $key, mixed $value): static
+    {
+        Arr::set($this->config, "{$this->environment}.{$key}", $value);
+
+        return $this;
+    }
+
+    public function save(string $path = null): static
+    {
+        $flags = Yaml::DUMP_EMPTY_ARRAY_AS_SEQUENCE | Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK;
+
+        file_put_contents($path ?? $this->path(), Yaml::dump($this->config, 4, 2, $flags));
+
+        return $this;
+    }
+
+    protected function getWebhooks(Server $server, Site $site): array
+    {
+        return collect($this->forge->webhooks($server->id, $site->id))->pluck('url')->values()->toArray();
     }
 
     protected function getDaemons(Server $server, Site $site)
@@ -95,5 +91,17 @@ class Configuration
                     'startsecs' => $daemon->startsecs,
                 ];
             })->values()->toArray();
+    }
+
+    protected function path(): string
+    {
+        return $this->path ?: getcwd() . DIRECTORY_SEPARATOR . 'forge.yml';
+    }
+
+    public function setEnvironment(string $environment): static
+    {
+        $this->environment = $environment;
+
+        return $this;
     }
 }
