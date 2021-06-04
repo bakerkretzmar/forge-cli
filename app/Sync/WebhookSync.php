@@ -7,7 +7,7 @@ use Laravel\Forge\Resources\Server;
 use Laravel\Forge\Resources\Site;
 use Laravel\Forge\Resources\Webhook;
 
-class WebhookSync extends BaseSync
+class WebhookSync extends Sync
 {
     public function sync(string $environment, Server $server, Site $site, OutputStyle $output, bool $force = false): void
     {

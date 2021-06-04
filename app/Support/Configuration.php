@@ -75,7 +75,7 @@ class Configuration
 
     protected function getWebhooks(Server $server, Site $site): array
     {
-        return collect($this->forge->webhooks($server->id, $site->id))->pluck('url')->values()->toArray();
+        return data_get($this->forge->webhooks($server->id, $site->id), '*.url');
     }
 
     protected function getDaemons(Server $server, Site $site)

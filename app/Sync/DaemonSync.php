@@ -8,9 +8,9 @@ use Laravel\Forge\Resources\Daemon;
 use Laravel\Forge\Resources\Server;
 use Laravel\Forge\Resources\Site;
 
-class DaemonSync extends BaseSync
+class DaemonSync extends Sync
 {
-    public function sync(string $environment, Server $server, Site $site, OutputStyle $output, bool $force = false): void
+    public function sync(Server $server, Site $site, OutputStyle $output, bool $force = false): void
     {
         $daemons = collect($this->config->get($environment, 'daemons', []));
         $daemonsOnForge = collect($this->forge->daemons($server->id))->filter(function (Daemon $daemon) use ($site) {

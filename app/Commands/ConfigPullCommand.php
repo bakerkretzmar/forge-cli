@@ -12,10 +12,10 @@ class ConfigPullCommand extends ForgeCommand
 
     public function handle(Forge $forge): int
     {
-        $server = $forge->server($this->config->get('server'));
-        $site = $forge->site($server->id, $this->config->get('id'));
-
-        $this->config->initialize($server, $site);
+        $this->config->initialize(
+            $server = $forge->server($this->config->get('server')),
+            $forge->site($server->id, $this->config->get('id'))
+        );
 
         $this->info('Updated the Forge configuration file.');
 
