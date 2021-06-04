@@ -32,11 +32,11 @@ class Configuration
         }
     }
 
-    public function initialize(string $environment, Server $server, Site $site)
+    public function initialize(Server $server, Site $site)
     {
-        $workers = $this->forge->workers($server->id, $site->id);
+        // $workers = $this->forge->workers($server->id, $site->id);
 
-        $this->config[$environment] = [
+        $this->config[$this->environment] = [
             'id' => $site->id,
             'name' => $site->name,
             'server' => $server->id,

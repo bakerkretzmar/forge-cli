@@ -16,7 +16,7 @@ class ConfigPullCommand extends ForgeCommand
         $server = $forge->server($this->config->get('server'));
         $site = $forge->site($server->id, $this->config->get('id'));
 
-        $this->config->initialize($this->environment, $server, $site);
+        $this->config->initialize($server, $site);
 
         $this->info('Updated the Forge configuration file.');
 

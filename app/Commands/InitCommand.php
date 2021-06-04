@@ -68,7 +68,7 @@ class InitCommand extends Command
             $site = $this->createSite($server);
         }
 
-        $configuration->initialize($this->argument('environment'), $server, $site);
+        $config->setEnvironment($this->argument('environment'))->initialize($server, $site);
 
         $this->info('The project was successfully initialized.');
     }
