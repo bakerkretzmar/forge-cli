@@ -6,6 +6,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Laravel\Forge\Forge;
 use Laravel\Forge\Resources\Daemon;
+use Laravel\Forge\Resources\PHPVersion;
 use Laravel\Forge\Resources\Server;
 use Laravel\Forge\Resources\Site;
 use RuntimeException;
@@ -36,8 +37,6 @@ class Configuration
 
     public function initialize(Server $server, Site $site)
     {
-        // $workers = $this->forge->workers($server->id, $site->id);
-
         $this->config[$this->environment] = [
             'id' => $site->id,
             'name' => $site->name,
@@ -46,7 +45,7 @@ class Configuration
             'deployment' => $site->getDeploymentScript(),
             'webhooks' => $this->getWebhooks($server, $site),
             'daemons' => $this->getDaemons($server, $site),
-            // 'workers' => $this->getWorkers($server, $site),
+            'workers' => $this->getWorkers($server, $site),
         ];
 
         $this->save();
@@ -93,6 +92,45 @@ class Configuration
                     'startsecs' => $daemon->startsecs,
                 ];
             })->values()->toArray();
+    }
+
+    protected function getWorkers(Server $server, Site $site)
+    {
+        $cli = collect($this->forge->phpVersions($server->id))->firstWhere('usedOnCli', true)->version;
+
+        $defaults = [
+            'queue' => 'default',
+            'connection' => 'redis',
+            'php' => $cli,
+            'timeout' => 60,
+            'processes' => 1,
+            'sleep' => 10,
+            'daemon' => false,
+            'delay' => 0,
+            'tries' => null,
+            'environment' => null,
+            'force' => false,
+        ];
+
+        return collect($this->forge->workers($server->id, $site->id))->map(function ($worker) use ($defaults) {
+            $data = [
+                'queue' => $worker->queue,
+                'connection' => $worker->connection,
+                'timeout' => $worker->timeout,
+                'delay' => $worker->delay,
+                'sleep' => $worker->sleep,
+                'tries' => $worker->tries,
+                'environment' => $worker->environment,
+                'daemon' => (bool) $worker->daemon,
+                'force' => (bool) $worker->force,
+                'php' => str_replace('.', '', head(explode(' ', $worker->command))),
+                'processes' => $worker->processes,
+            ];
+
+            $nonDefaults = collect($data)->filter(fn ($value, $key) => $value !== $defaults[$key])->keys()->toArray();
+
+            return Arr::only($data, ['queue', 'connection', ...$nonDefaults]);
+        })->toArray();
     }
 
     protected function path(): string
