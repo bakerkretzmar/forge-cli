@@ -8,8 +8,9 @@ use Laravel\Forge\Forge;
 use Laravel\Forge\Resources\Daemon;
 use Laravel\Forge\Resources\Server;
 use Laravel\Forge\Resources\Site;
-use Laravel\Forge\Resources\Webhook;
+use RuntimeException;
 use Symfony\Component\Yaml\Yaml;
+use Throwable;
 
 class Configuration
 {
@@ -28,7 +29,8 @@ class Configuration
 
         try {
             $this->config = Yaml::parseFile($this->path());
-        } catch (\Exception $e) {
+        } catch (Throwable $e) {
+            throw new RuntimeException("Failed to parse `forge.yml` configuration file: {$e->getMessage()}");
         }
     }
 

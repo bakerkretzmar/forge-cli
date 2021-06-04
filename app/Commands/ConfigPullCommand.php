@@ -2,7 +2,6 @@
 
 namespace App\Commands;
 
-use App\Support\Configuration;
 use Laravel\Forge\Forge;
 
 class ConfigPullCommand extends ForgeCommand

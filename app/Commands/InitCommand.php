@@ -2,7 +2,6 @@
 
 namespace App\Commands;
 
-use App\Commands\Concerns\NeedsForgeToken;
 use App\Support\Configuration;
 use Laravel\Forge\Forge;
 use Laravel\Forge\Resources\Server;
@@ -11,8 +10,6 @@ use LaravelZero\Framework\Commands\Command;
 
 class InitCommand extends Command
 {
-    use NeedsForgeToken;
-
     const PROJECT_TYPES = [
         'php' => 'General PHP/Laravel Application.',
         'html' => 'Static HTML site.',
@@ -28,11 +25,7 @@ class InitCommand extends Command
 
     protected $description = 'Initialize a new app ready to get deployed on Laravel Forge';
 
-    /**
-     * @param Forge $forge
-     * @param Configuration $configuration
-     */
-    public function handle(Forge $forge, Configuration $configuration)
+    public function handle(Forge $forge, Configuration $config): int
     {
         $this->ensureHasToken();
 

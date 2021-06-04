@@ -2,7 +2,6 @@
 
 namespace App\Commands;
 
-use App\Commands\Concerns\NeedsForgeToken;
 use App\Support\TokenNodeVisitor;
 use LaravelZero\Framework\Commands\Command;
 use PhpParser\Lexer\Emulative;
@@ -20,8 +19,6 @@ class LoginCommand extends Command
     const TWO_FACTOR_AUTH_URL = 'https://forge.laravel.com/auth/token';
 
     const TOKEN_URL = 'https://forge.laravel.com/oauth/personal-access-tokens';
-
-    use NeedsForgeToken;
 
     protected $signature = 'login {--force}';
 
