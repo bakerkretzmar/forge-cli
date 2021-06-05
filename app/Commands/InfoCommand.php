@@ -14,8 +14,8 @@ class InfoCommand extends ForgeCommand
 
     public function handle(Forge $forge): int
     {
-        $server = $forge->server($serverId = $this->config->get('server'));
-        $site = $forge->site($serverId, $this->config->get('id'));
+        $server = $forge->server($this->config->get('server'));
+        $site = $forge->site($server->id, $this->config->get('id'));
 
         $this->table([new TableCell('Server Details', ['colspan' => 2])], [
             ['Server', $server->name],

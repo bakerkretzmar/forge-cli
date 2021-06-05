@@ -29,7 +29,8 @@ abstract class ForgeCommand extends Command
         }
 
         $this->environment = $this->argument('environment');
-        $this->config = app(Configuration::class)->setEnvironment($this->environment);
+        $this->config = app(Configuration::class);
+        $this->config::setEnvironment($this->environment);
 
         return parent::execute($input, $output);
     }

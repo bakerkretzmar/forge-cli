@@ -15,18 +15,16 @@ use Throwable;
 
 class Configuration
 {
+    protected static ?string $environment = null;
+
     protected Forge $forge;
-
-    protected ?string $environment = null;
-
     protected ?string $path = null;
-
     protected array $config = [];
 
     public function __construct(Forge $forge, string $environment = null)
     {
         $this->forge = $forge;
-        $this->environment = $environment;
+        static::$environment ??= $environment;
 
         try {
             $this->config = Yaml::parseFile($this->path());
@@ -37,7 +35,7 @@ class Configuration
 
     public function initialize(Server $server, Site $site)
     {
-        $this->config[$this->environment] = [
+        $this->config[static::$environment] = [
             'id' => $site->id,
             'name' => $site->name,
             'server' => $server->id,
@@ -53,12 +51,12 @@ class Configuration
 
     public function get(string $key, mixed $default = null): mixed
     {
-        return Arr::get($this->config, "{$this->environment}.{$key}", $default);
+        return Arr::get($this->config, static::$environment . ".{$key}", $default);
     }
 
     public function set(string $key, mixed $value): static
     {
-        Arr::set($this->config, "{$this->environment}.{$key}", $value);
+        Arr::set($this->config, static::$environment . ".{$key}", $value);
 
         return $this;
     }
@@ -96,21 +94,7 @@ class Configuration
 
     protected function getWorkers(Server $server, Site $site)
     {
-        $cli = collect($this->forge->phpVersions($server->id))->firstWhere('usedOnCli', true)->version;
-
-        $defaults = [
-            'queue' => 'default',
-            'connection' => 'redis',
-            'php' => $cli,
-            'timeout' => 60,
-            'processes' => 1,
-            'sleep' => 10,
-            'daemon' => false,
-            'delay' => 0,
-            'tries' => null,
-            'environment' => null,
-            'force' => false,
-        ];
+        $defaults = $this->defaultWorker($server);
 
         return collect($this->forge->workers($server->id, $site->id))->map(function ($worker) use ($defaults) {
             $data = [
@@ -138,10 +122,32 @@ class Configuration
         return $this->path ?: getcwd() . DIRECTORY_SEPARATOR . 'forge.yml';
     }
 
-    public function setEnvironment(string $environment): static
+    public static function setEnvironment(string $environment): void
     {
-        $this->environment = $environment;
+        static::$environment = $environment;
+    }
 
-        return $this;
+    public static function environment(): ?string
+    {
+        return static::$environment;
+    }
+
+    public function defaultWorker(Server $server): array
+    {
+        $cli = collect($this->forge->phpVersions($server->id))->firstWhere('usedOnCli', true)->version;
+
+        return [
+            'queue' => 'default',
+            'connection' => 'redis',
+            'php' => $cli,
+            'timeout' => 60,
+            'processes' => 1,
+            'sleep' => 10,
+            'daemon' => false,
+            'delay' => 0,
+            'tries' => null,
+            'environment' => null,
+            'force' => false,
+        ];
     }
 }
