@@ -24,10 +24,12 @@ class SyncWorkers extends Sync
 
                 return true;
             }
-        })->map(function (array $worker) use ($server) {
-            dump('creating local worker not found on Forge:');
-            dump(array_merge($this->config->defaultWorker($server), $worker));
-            // create new workers
+        })->map(function (array $worker) use ($server, $site, $output) {
+            $data = array_merge($this->config->defaultWorker($server), $worker);
+
+            $output("Creating {$data['queue']} queue worker on {$this->emphasize($data['connection'])} connection...");
+
+            $this->forge->createWorker($server->id, $site->id, $data, false);
         });
 
         $forgeWorkers->map(function (Worker $worker) {
