@@ -26,7 +26,9 @@ class ConfigPushCommand extends ForgeCommand
         $server = $forge->server($this->config->get('server'));
         $site = $forge->site($server->id, $this->config->get('id'));
 
-        app(SyncWorkers::class)->sync($server, $site, $this->getOutput(), $this->option('force'));
+        $output = fn (string $contents, string $level = 'info') => $this->{$level}($contents);
+
+        app(SyncWorkers::class)->sync($server, $site, $output, $this->option('force'));
         // foreach (static::SYNC_CLASSES as $syncClass) {
         //     $this->info('Synchronizing ' . $syncClass);
 

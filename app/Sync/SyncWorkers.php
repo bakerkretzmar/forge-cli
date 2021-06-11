@@ -2,6 +2,7 @@
 
 namespace App\Sync;
 
+use Closure;
 use Illuminate\Console\OutputStyle;
 use Illuminate\Support\Arr;
 use Laravel\Forge\Resources\Server;
@@ -10,7 +11,7 @@ use Laravel\Forge\Resources\Worker;
 
 class SyncWorkers extends Sync
 {
-    public function sync(Server $server, Site $site, ?OutputStyle $output, bool $force = false): void
+    public function sync(Server $server, Site $site, Closure $output, bool $force = false): void
     {
         $workers = collect($this->config->get('workers', []));
         $forgeWorkers = collect($this->forge->workers($server->id, $site->id))->keyBy('id');
