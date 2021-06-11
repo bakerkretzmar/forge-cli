@@ -2,8 +2,6 @@
 
 namespace App\Support;
 
-use Laravel\Forge\Resources\Server;
-
 class Defaults
 {
     public static function worker(string $php): array
@@ -11,7 +9,7 @@ class Defaults
         return [
             'queue' => 'default', // Careful - defaults to blank if omitted
             'connection' => 'redis', // Required by Forge API
-            'php_version' => $php, // Required by Forge API (but called 'php_version')
+            'php_version' => $php, // Required by Forge API
             'daemon' => false, // Required by Forge API
             'processes' => 1,
             'timeout' => 60, // Careful - defaults to 0 if omitted
@@ -21,10 +19,5 @@ class Defaults
             'environment' => null,
             'force' => false,
         ];
-    }
-
-    public static function phpVersionUsedOnCli(Server $server): array
-    {
-        $cli = collect($this->forge->phpVersions($server->id))->firstWhere('usedOnCli', true)->version;
     }
 }
