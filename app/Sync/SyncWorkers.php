@@ -18,51 +18,31 @@ class SyncWorkers extends Sync
 
         // Create workers that are defined locally but do not exist on Forge
         $workers->reject(function (array $worker) use (&$forgeWorkers, $server, $site) {
-            // THIS might behave weirdly if there are multiple identical workers on forge?
             if ($match = $forgeWorkers->first(fn (Worker $forge) => $this->equivalent($server, $forge, $worker))) {
+                // Remove each found worker from the list of 'unmatched' workers on Forge
                 $forgeWorkers->forget($match->id);
 
                 return true;
             }
         })->map(function (array $worker) use ($server, $site, $output) {
-            $data = array_merge($this->config->defaultWorker($server), $worker);
+            $data = $this->getWorkerPayload($server, $worker);
 
             $output("Creating {$data['queue']} queue worker on {$this->emphasize($data['connection'])} connection...");
 
-            $this->forge->createWorker($server->id, $site->id, $data, false);
+            $this->forge->createWorker($server->id, $site->id, $data);
         });
 
-        $forgeWorkers->map(function (Worker $worker) {
-            dump('deleting Forge worker not found locally:');
-            dump($worker);
-        });
+        if ($force) {
+            $forgeWorkers->map(function (Worker $worker) use ($server, $site, $output) {
+                $output("Deleting {$worker->queue} queue worker present on Forge but not listed locally...", 'warn');
 
-        // Create webhooks not on Forge
-        // $webhooks->diff(collect($webhooksOnForge)->map(function (Webhook $webhook) {
-        //     return $webhook->url;
-        // }))->map(function ($url) use ($server, $site, $output) {
-        //     $output->writeln("Creating webhook: {$url}");
-        //     $this->forge->createWebhook($server->id, $site->id, [
-        //         'url' => $url,
-        //     ]);
-        // });
-
-        // // Delete webhooks on Forge but removed locally
-        // $deleteWebhooks = collect($webhooksOnForge)
-        //     ->reject(function (Webhook $webhook) use ($webhooks) {
-        //         return $webhooks->contains($webhook->url);
-        //     });
-
-        // if (! $force && $deleteWebhooks->isNotEmpty()) {
-        //     $output->warning("Skipping the deletion of {$deleteWebhooks->count()} Webhooks. \nUse --force to delete them.");
-
-        //     return;
-        // }
-
-        // $deleteWebhooks->map(function (Webhook $webhook) use ($server, $site, $output) {
-        //     $output->writeln("Deleting webhook: {$webhook->url}");
-        //     $this->forge->deleteWebhook($server->id, $site->id, $webhook->id);
-        // });
+                $this->forge->deleteWorker($server->id, $site->id, $worker->id);
+            });
+        } else {
+            $output("Found {$forgeWorkers->count()} queue workers present on Forge but not listed locally.", 'warn');
+            // @todo just `->confirm()` here
+            $output('Run the command again with the `--force` option to delete them.');
+        }
     }
 
     protected function equivalent(Server $server, Worker $worker, array $config): bool
@@ -93,20 +73,11 @@ class SyncWorkers extends Sync
         return true;
     }
 
-    // protected function defaultWorkerPayload(): array
-    // {
-    //     return [
-    //         'connection' => 'redis',
-    //         'queue' => 'default',
-    //         'timeout' => 60,
-    //         'sleep' => 10,
-    //         'delay' => 0,
-    //         'tries' => null,
-    //         'environment' => null,
-    //         'daemon' => false,
-    //         'force' => false,
-    //         'php_version' => 'php', // Will use server's default PHP CLI version
-    //         'processes' => 1,
-    //     ];
-    // }
+    protected function getWorkerPayload(Server $server, array $worker): array
+    {
+        return array_merge(
+            $data = array_merge($this->config->defaultWorker($server), $worker),
+            ['php_version' => $data['php']],
+        );
+    }
 }
