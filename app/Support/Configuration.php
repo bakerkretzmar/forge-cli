@@ -100,15 +100,15 @@ class Configuration
             $data = [
                 'queue' => $worker->queue,
                 'connection' => $worker->connection,
+                'php' => str_replace('.', '', head(explode(' ', $worker->command))),
+                'daemon' => (bool) $worker->daemon,
+                'processes' => $worker->processes,
                 'timeout' => $worker->timeout,
-                'delay' => $worker->delay,
                 'sleep' => $worker->sleep,
+                'delay' => $worker->delay,
                 'tries' => $worker->tries,
                 'environment' => $worker->environment,
-                'daemon' => (bool) $worker->daemon,
                 'force' => (bool) $worker->force,
-                'php' => str_replace('.', '', head(explode(' ', $worker->command))),
-                'processes' => $worker->processes,
             ];
 
             $nonDefaults = collect($data)->filter(fn ($value, $key) => $value !== $defaults[$key])->keys()->toArray();
@@ -140,10 +140,10 @@ class Configuration
             'queue' => 'default',
             'connection' => 'redis',
             'php' => $cli,
-            'timeout' => 60,
-            'processes' => 1,
-            'sleep' => 10,
             'daemon' => false,
+            'processes' => 1,
+            'timeout' => 60,
+            'sleep' => 10,
             'delay' => 0,
             'tries' => null,
             'environment' => null,
