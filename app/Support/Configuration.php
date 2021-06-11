@@ -94,7 +94,9 @@ class Configuration
 
     protected function getWorkers(Server $server, Site $site)
     {
-        $defaults = $this->defaultWorker($server);
+        $cli = collect($this->forge->phpVersions($server->id))->firstWhere('usedOnCli', true)->version;
+
+        $defaults = Defaults::worker($cli);
 
         return collect($this->forge->workers($server->id, $site->id))->map(function ($worker) use ($defaults) {
             $data = [
@@ -130,24 +132,5 @@ class Configuration
     public static function environment(): ?string
     {
         return static::$environment;
-    }
-
-    public function defaultWorker(Server $server): array
-    {
-        $cli = collect($this->forge->phpVersions($server->id))->firstWhere('usedOnCli', true)->version;
-
-        return [
-            'queue' => 'default',
-            'connection' => 'redis',
-            'php' => $cli,
-            'daemon' => false,
-            'processes' => 1,
-            'timeout' => 60,
-            'sleep' => 10,
-            'delay' => 0,
-            'tries' => null,
-            'environment' => null,
-            'force' => false,
-        ];
     }
 }

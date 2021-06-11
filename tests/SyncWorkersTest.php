@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use App\Support\Defaults;
 use Laravel\Forge\Forge;
 use Mockery;
 use Tests\TestCase;
@@ -475,21 +476,7 @@ class SyncWorkersTest extends TestCase
             $this->withForgeWorker($attributes);
         }
 
-        // COPIED FROM CONFIG DON'T KEEP THIS PUT IT SOMEWHERE CENTRAL
-        $default = [
-            'queue' => 'default',
-            'connection' => 'redis',
-            'php' => 'php80',
-            'daemon' => false,
-            'processes' => 1,
-            'timeout' => 60,
-            'sleep' => 10,
-            'delay' => 0,
-            'tries' => null,
-            'environment' => null,
-            'force' => false,
-            'php_version' => 'php80',
-        ];
+        $default = array_merge(Defaults::worker('php80'), ['php_version' => 'php80']);
 
         foreach ($create as $attributes) {
             $this->shouldCreateForgeWorker(array_merge($default, $attributes));

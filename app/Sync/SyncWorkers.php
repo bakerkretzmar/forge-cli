@@ -2,6 +2,7 @@
 
 namespace App\Sync;
 
+use App\Support\Defaults;
 use Closure;
 use Illuminate\Console\OutputStyle;
 use Illuminate\Support\Arr;
@@ -49,8 +50,9 @@ class SyncWorkers extends Sync
 
     protected function equivalent(Server $server, Worker $worker, array $config): bool
     {
-        // @todo cache this internally in config
-        $defaults = $this->config->defaultWorker($server);
+        $cli = collect($this->forge->phpVersions($server->id))->firstWhere('usedOnCli', true)->version;
+
+        $defaults = Defaults::worker($cli);
 
         $data = [
             'queue' => $worker->queue,
@@ -77,8 +79,10 @@ class SyncWorkers extends Sync
 
     protected function getWorkerPayload(Server $server, array $worker): array
     {
+        $cli = collect($this->forge->phpVersions($server->id))->firstWhere('usedOnCli', true)->version;
+
         return array_merge(
-            $data = array_merge($this->config->defaultWorker($server), $worker),
+            $data = array_merge(Defaults::worker($cli), $worker),
             ['php_version' => $data['php']],
         );
     }
