@@ -88,7 +88,7 @@ class SyncWorkersTest extends TestCase
                     -
                       queue: emails
                       connection: redis
-                      php: php74
+                      php_version: php74
                       daemon: true
                     -
                       queue: default
@@ -115,7 +115,7 @@ class SyncWorkersTest extends TestCase
                     -
                       queue: jobs
                       connection: rabbit
-                      php: php73
+                      php_version: php73
                       daemon: true
                       processes: 2
                       timeout: 0
@@ -183,7 +183,7 @@ class SyncWorkersTest extends TestCase
                   -
                     queue: jobs
                     connection: rabbit
-                    php: php73
+                    php_version: php73
                     daemon: true
                   -
                     queue: default
@@ -201,7 +201,7 @@ class SyncWorkersTest extends TestCase
                   -
                     queue: default
                     connection: redis
-                    php: php73
+                    php_version: php73
                 YAML, [
                     ['command' => 'php7.3 /home/forge', 'queue' => 'jobs', 'connection' => 'rabbit', 'daemon' => 1],
                     ['timeout' => 0, 'processes' => 2, 'sleep' => 5, 'delay' => 1],
@@ -212,7 +212,7 @@ class SyncWorkersTest extends TestCase
                     -
                       queue: jobs
                       connection: rabbit
-                      php: php73
+                      php_version: php73
                       daemon: true
                     -
                       queue: default
@@ -230,7 +230,7 @@ class SyncWorkersTest extends TestCase
                     -
                       queue: default
                       connection: redis
-                      php: php73
+                      php_version: php73
                 YAML,
             ],
             'additional local worker' => [
@@ -239,12 +239,12 @@ class SyncWorkersTest extends TestCase
                   -
                     queue: jobs
                     connection: rabbit
-                    php: php73
+                    php_version: php73
                     daemon: true
                   -
                     queue: default
                     connection: redis
-                    php: php73
+                    php_version: php73
                 YAML, [
                     ['command' => 'php7.3 /home/forge'],
                 ], <<<YAML
@@ -252,7 +252,7 @@ class SyncWorkersTest extends TestCase
                     -
                       queue: default
                       connection: redis
-                      php: php73
+                      php_version: php73
                 YAML,
             ],
             'additional default local worker' => [
@@ -264,7 +264,7 @@ class SyncWorkersTest extends TestCase
                   -
                     queue: default
                     connection: redis
-                    php: php73
+                    php_version: php73
                 YAML, [
                     ['command' => 'php7.2 /home/forge', 'daemon' => 1],
                 ], <<<YAML
@@ -272,7 +272,7 @@ class SyncWorkersTest extends TestCase
                     -
                       queue: default
                       connection: redis
-                      php: php72
+                      php_version: php72
                 YAML,
             ],
             'two identical additional default local workers' => [
@@ -284,7 +284,7 @@ class SyncWorkersTest extends TestCase
                   -
                     queue: default
                     connection: redis
-                    php: php73
+                    php_version: php73
                   -
                     queue: default
                     connection: redis
@@ -295,7 +295,7 @@ class SyncWorkersTest extends TestCase
                     -
                       queue: default
                       connection: redis
-                      php: php73
+                      php_version: php73
                 YAML,
             ],
         ];
@@ -418,7 +418,7 @@ class SyncWorkersTest extends TestCase
                   -
                     queue: default
                     connection: redis
-                    php: php74
+                    php_version: php74
                     daemon: true
                     timeout: 61
                 YAML,
@@ -438,7 +438,7 @@ class SyncWorkersTest extends TestCase
                     [
                         'queue' => 'default',
                         'connection' => 'redis',
-                        'php' => 'php74',
+                        'php_version' => 'php74',
                         'daemon' => true,
                         'timeout' => 61,
                         'php_version' => 'php74',
@@ -476,7 +476,7 @@ class SyncWorkersTest extends TestCase
             $this->withForgeWorker($attributes);
         }
 
-        $default = array_merge(Defaults::worker('php80'), ['php_version' => 'php80']);
+        $default = array_merge(Defaults::worker('php80'));
 
         foreach ($create as $attributes) {
             $this->shouldCreateForgeWorker(array_merge($default, $attributes));

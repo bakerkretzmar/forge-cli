@@ -4,8 +4,6 @@ namespace App\Sync;
 
 use App\Support\Defaults;
 use Closure;
-use Illuminate\Console\OutputStyle;
-use Illuminate\Support\Arr;
 use Laravel\Forge\Resources\Server;
 use Laravel\Forge\Resources\Site;
 use Laravel\Forge\Resources\Worker;
@@ -64,7 +62,7 @@ class SyncWorkers extends Sync
             'environment' => $worker->environment,
             'daemon' => (bool) $worker->daemon,
             'force' => (bool) $worker->force,
-            'php' => str_replace('.', '', head(explode(' ', $worker->command))),
+            'php_version' => str_replace('.', '', head(explode(' ', $worker->command))),
             'processes' => $worker->processes,
         ];
 
@@ -81,9 +79,6 @@ class SyncWorkers extends Sync
     {
         $cli = collect($this->forge->phpVersions($server->id))->firstWhere('usedOnCli', true)->version;
 
-        return array_merge(
-            $data = array_merge(Defaults::worker($cli), $worker),
-            ['php_version' => $data['php']],
-        );
+        return array_merge(Defaults::worker($cli), $worker);
     }
 }

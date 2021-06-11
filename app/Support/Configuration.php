@@ -102,7 +102,7 @@ class Configuration
             $data = [
                 'queue' => $worker->queue,
                 'connection' => $worker->connection,
-                'php' => str_replace('.', '', head(explode(' ', $worker->command))),
+                'php_version' => str_replace('.', '', head(explode(' ', $worker->command))),
                 'daemon' => (bool) $worker->daemon,
                 'processes' => $worker->processes,
                 'timeout' => $worker->timeout,

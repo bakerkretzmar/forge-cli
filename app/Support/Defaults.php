@@ -11,7 +11,7 @@ class Defaults
         return [
             'queue' => 'default', // Careful - defaults to blank if omitted
             'connection' => 'redis', // Required by Forge API
-            'php' => $php, // Required by Forge API (but called 'php_version')
+            'php_version' => $php, // Required by Forge API (but called 'php_version')
             'daemon' => false, // Required by Forge API
             'processes' => 1,
             'timeout' => 60, // Careful - defaults to 0 if omitted
