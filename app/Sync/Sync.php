@@ -2,6 +2,7 @@
 
 namespace App\Sync;
 
+use App\Concerns\EmphasizesOutput;
 use App\Support\Configuration;
 use Illuminate\Console\OutputStyle;
 use Laravel\Forge\Forge;
@@ -10,6 +11,8 @@ use Laravel\Forge\Resources\Site;
 
 abstract class Sync
 {
+    use EmphasizesOutput;
+
     public function __construct(
         protected Forge $forge,
         protected Configuration $config,

@@ -2,6 +2,7 @@
 
 namespace App\Commands;
 
+use App\Concerns\EmphasizesOutput;
 use App\Support\Configuration;
 use LaravelZero\Framework\Commands\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -10,6 +11,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 abstract class ForgeCommand extends Command
 {
+    use EmphasizesOutput;
+
     protected string $environment;
 
     protected Configuration $config;
@@ -40,10 +43,5 @@ abstract class ForgeCommand extends Command
         return [
             new InputArgument('environment', InputArgument::OPTIONAL, 'The environment to run the command in.', 'production'),
         ];
-    }
-
-    protected function emphasize(string $text): string
-    {
-        return "<options=bold;fg=blue>{$text}</options=bold;fg=blue>";
     }
 }
