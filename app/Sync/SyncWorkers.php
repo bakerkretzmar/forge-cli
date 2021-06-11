@@ -32,16 +32,18 @@ class SyncWorkers extends Sync
             $this->forge->createWorker($server->id, $site->id, $data);
         });
 
-        if ($force) {
-            $forgeWorkers->map(function (Worker $worker) use ($server, $site, $output) {
-                $output("Deleting {$worker->queue} queue worker present on Forge but not listed locally...", 'warn');
+        if ($forgeWorkers->isNotEmpty()) {
+            if ($force) {
+                $forgeWorkers->map(function (Worker $worker) use ($server, $site, $output) {
+                    $output("Deleting {$worker->queue} queue worker present on Forge but not listed locally...", 'warn');
 
-                $this->forge->deleteWorker($server->id, $site->id, $worker->id);
-            });
-        } else {
-            $output("Found {$forgeWorkers->count()} queue workers present on Forge but not listed locally.", 'warn');
-            // @todo just `->confirm()` here
-            $output('Run the command again with the `--force` option to delete them.');
+                    $this->forge->deleteWorker($server->id, $site->id, $worker->id);
+                });
+            } else {
+                $output("Found {$forgeWorkers->count()} queue workers present on Forge but not listed locally.", 'warn');
+                // @todo just `->confirm()` here
+                $output('Run the command again with the `--force` option to delete them.');
+            }
         }
     }
 
